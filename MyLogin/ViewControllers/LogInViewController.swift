@@ -12,12 +12,29 @@ class LogInViewController: UIViewController {
     @IBOutlet var userNameTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
     
-    private let user = "Yuliya"
-    private let password = "Ten10"
+    private let user = User.getUserData()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        userNameTextField.text = user.login
+        passwordTextField.text = user.password
+        
+    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let welcomeViewController = segue.destination as? WelcomeViewController else {return}
-        welcomeViewController.user = user
+        guard let tapBarController = segue.destination as? UITabBarController else { return }
+        guard let viewControllers = tapBarController.viewControllers else { return }
+        
+        viewControllers.forEach {
+            if let welcomeViewController = $0 as? WelcomeViewController {
+                welcomeViewController.user = user
+            } else if let navigationViewController = $0 as? UINavigationController {
+                guard
+                    let informationViewController = navigationViewController.topViewController as? InformationViewController
+                else { return }
+                informationViewController.user = user
+            }
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -26,7 +43,7 @@ class LogInViewController: UIViewController {
     }
 
     @IBAction func logInButtonTapped() {
-        guard userNameTextField.text == user, passwordTextField.text == password else {
+        guard userNameTextField.text == user.login, passwordTextField.text == user.password else {
             showAlert(
                 title: "Invalid user name or password",
                 message: "Please, enter correct user name or password",
@@ -39,8 +56,13 @@ class LogInViewController: UIViewController {
     
     @IBAction func dataRemind(_ sender: UIButton) {
         sender.tag == 0
-        ? showAlert(title: "Mistake!", message: "Your user name is \(user)")
-        : showAlert(title: "Mistake!", message: "Your password is \(password)")
+        ? showAlert(title: "Mistake!", message: "Your user name is \(user.login)")
+        : showAlert(title: "Mistake!", message: "Your password is \(user.password)")
+    }
+    
+    @IBAction func unwindSegue( _ sender: UIStoryboardSegue) {
+        userNameTextField.text = ""
+        passwordTextField.text = ""
     }
     
 }
