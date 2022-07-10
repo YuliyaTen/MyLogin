@@ -23,7 +23,6 @@ class InformationViewController: UIViewController {
     
     var user: User!
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = user.person.fullName
@@ -40,5 +39,4 @@ class InformationViewController: UIViewController {
         imageViewController.user = user
     }
     
-
 }
